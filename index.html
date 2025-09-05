@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>AR Poster (6 targets)</title>
+  <script src="https://aframe.io/releases/1.3.0/aframe.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
+  <style>
+    body{margin:0;overflow:hidden;background:#000;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+    .hint{position:fixed;left:0;right:0;bottom:0;background:rgba(0,0,0,.6);color:#fff;padding:10px 14px;text-align:center;font-size:14px}
+    .hint code{background:rgba(255,255,255,.1);padding:2px 4px;border-radius:4px}
+  </style>
+</head>
+<body>
+  <a-scene mindar-image="imageTargetSrc: ./targets.mind" embedded color-space="sRGB"
+           renderer="colorManagement: true, physicallyCorrectLights"
+           vr-mode-ui="enabled: false" device-orientation-permission-ui="enabled: false">
+   <a-assets>
+  <video id="clip1" src="./videos/clip1.mp4" autoplay loop muted playsinline webkit-playsinline></video>
+  <video id="clip2" src="./videos/clip2.mp4" autoplay loop muted playsinline webkit-playsinline></video>
+  <video id="clip3" src="./videos/clip3.mp4" autoplay loop muted playsinline webkit-playsinline></video>
+  <video id="clip4" src="./videos/clip4.mp4" autoplay loop muted playsinline webkit-playsinline></video>
+  <video id="clip5" src="./videos/clip5.mp4" autoplay loop muted playsinline webkit-playsinline></video>
+  <video id="clip6" src="./videos/clip6.mp4" autoplay loop muted playsinline webkit-playsinline></video>
+</a-assets>
+
+    <a-camera position="0 0 0" look-controls="false"></a-camera>
+
+    <a-entity id="t0" mindar-image-target="targetIndex: 0">
+      <a-video src="#clip1" width="1" height="0.5625" position="0 0 0"></a-video>
+    </a-entity>
+
+    <a-entity id="t1" mindar-image-target="targetIndex: 1">
+      <a-video src="#clip2" width="1" height="0.5625" position="0 0 0"></a-video>
+    </a-entity>
+
+    <a-entity id="t2" mindar-image-target="targetIndex: 2">
+      <a-video src="#clip3" width="1" height="0.5625" position="0 0 0"></a-video>
+    </a-entity>
+
+    <a-entity id="t3" mindar-image-target="targetIndex: 3">
+      <a-video src="#clip4" width="1" height="0.5625" position="0 0 0"></a-video>
+    </a-entity>
+
+    <a-entity id="t4" mindar-image-target="targetIndex: 4">
+      <a-video src="#clip5" width="1" height="0.5625" position="0 0 0"></a-video>
+    </a-entity>
+
+    <a-entity id="t5" mindar-image-target="targetIndex: 5">
+      <a-video src="#clip6" width="1" height="0.5625" position="0 0 0"></a-video>
+    </a-entity>
+  </a-scene>
+
+  <div class="hint">
+    Multi Target: 6 картинок → 6 роликов (<code>clip1.mp4</code> … <code>clip6.mp4</code>).<br>
+    Порядок зависит от порядка загрузки картинок в компилятор MindAR.
+  </div>
+
+  <script>
+  const map = [
+    {entityId:'t0', videoId:'clip1'},
+    {entityId:'t1', videoId:'clip2'},
+    {entityId:'t2', videoId:'clip3'},
+    {entityId:'t3', videoId:'clip4'},
+    {entityId:'t4', videoId:'clip5'},
+    {entityId:'t5', videoId:'clip6'}
+  ];
+
+  map.forEach(({entityId, videoId})=>{
+    const ent = document.getElementById(entityId);
+    const vid = document.getElementById(videoId);
+    ent.addEventListener('targetFound', ()=> vid.play().catch(()=>{}));
+    ent.addEventListener('targetLost', ()=> vid.pause());
+  });
+
+  // 🔹 Фикс для iPhone/Safari
+  document.body.addEventListener('click', ()=> {
+    const vids = document.querySelectorAll("video");
+    vids.forEach(v => v.play().catch(()=>{}));
+  });
+</script>
+</body>
+</html>
