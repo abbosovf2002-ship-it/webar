@@ -16,14 +16,14 @@
   <a-scene mindar-image="imageTargetSrc: ./targets.mind" embedded color-space="sRGB"
            renderer="colorManagement: true, physicallyCorrectLights"
            vr-mode-ui="enabled: false" device-orientation-permission-ui="enabled: false">
-    <a-assets>
-      <video id="clip1" src="./videos/clip1.mp4" loop muted playsinline webkit-playsinline></video>
-      <video id="clip2" src="./videos/clip2.mp4" loop muted playsinline webkit-playsinline></video>
-      <video id="clip3" src="./videos/clip3.mp4" loop muted playsinline webkit-playsinline></video>
-      <video id="clip4" src="./videos/clip4.mp4" loop muted playsinline webkit-playsinline></video>
-      <video id="clip5" src="./videos/clip5.mp4" loop muted playsinline webkit-playsinline></video>
-      <video id="clip6" src="./videos/clip6.mp4" loop muted playsinline webkit-playsinline></video>
-    </a-assets>
+   <a-assets>
+  <video id="clip1" src="./videos/clip1.mp4" autoplay loop muted playsinline webkit-playsinline></video>
+  <video id="clip2" src="./videos/clip2.mp4" autoplay loop muted playsinline webkit-playsinline></video>
+  <video id="clip3" src="./videos/clip3.mp4" autoplay loop muted playsinline webkit-playsinline></video>
+  <video id="clip4" src="./videos/clip4.mp4" autoplay loop muted playsinline webkit-playsinline></video>
+  <video id="clip5" src="./videos/clip5.mp4" autoplay loop muted playsinline webkit-playsinline></video>
+  <video id="clip6" src="./videos/clip6.mp4" autoplay loop muted playsinline webkit-playsinline></video>
+</a-assets>
 
     <a-camera position="0 0 0" look-controls="false"></a-camera>
 
@@ -58,20 +58,27 @@
   </div>
 
   <script>
-    const map = [
-      {entityId:'t0', videoId:'clip1'},
-      {entityId:'t1', videoId:'clip2'},
-      {entityId:'t2', videoId:'clip3'},
-      {entityId:'t3', videoId:'clip4'},
-      {entityId:'t4', videoId:'clip5'},
-      {entityId:'t5', videoId:'clip6'}
-    ];
-    map.forEach(({entityId, videoId})=>{
-      const ent = document.getElementById(entityId);
-      const vid = document.getElementById(videoId);
-      ent.addEventListener('targetFound', ()=> vid.play().catch(()=>{}));
-      ent.addEventListener('targetLost', ()=> vid.pause());
-    });
-  </script>
+  const map = [
+    {entityId:'t0', videoId:'clip1'},
+    {entityId:'t1', videoId:'clip2'},
+    {entityId:'t2', videoId:'clip3'},
+    {entityId:'t3', videoId:'clip4'},
+    {entityId:'t4', videoId:'clip5'},
+    {entityId:'t5', videoId:'clip6'}
+  ];
+
+  map.forEach(({entityId, videoId})=>{
+    const ent = document.getElementById(entityId);
+    const vid = document.getElementById(videoId);
+    ent.addEventListener('targetFound', ()=> vid.play().catch(()=>{}));
+    ent.addEventListener('targetLost', ()=> vid.pause());
+  });
+
+  // 🔹 Фикс для iPhone/Safari
+  document.body.addEventListener('click', ()=> {
+    const vids = document.querySelectorAll("video");
+    vids.forEach(v => v.play().catch(()=>{}));
+  });
+</script>
 </body>
 </html>
