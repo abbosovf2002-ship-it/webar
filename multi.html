@@ -3,25 +3,29 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>AR Poster (6 targets, Reels + sound + camera preview)</title>
+  <title>AR Promo Reels</title>
   <script src="https://aframe.io/releases/1.3.0/aframe.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
   <style>
     html, body {
-      margin:0;
-      padding:0;
-      width:100%;
-      height:100%;
-      overflow:hidden;
-      background:#000;
-      font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+      margin:0; padding:0;
+      width:100%; height:100%;
+      background:#000; overflow:hidden;
     }
     #camera-feed {
+      position:fixed; top:0; left:0;
+      width:100%; height:100%;
+      object-fit:cover;
+      z-index:-1;
+    }
+    .reels {
       position:fixed;
       top:0; left:0;
       width:100%; height:100%;
       object-fit:cover;
-      z-index:-1; /* фон */
+      display:none;
+      z-index:5;
+      background:#000;
     }
     .hint {
       position:fixed;
@@ -33,97 +37,88 @@
       font-size:14px;
       z-index:10;
     }
-    .hint code {
-      background:rgba(255,255,255,.1);
-      padding:2px 4px;
-      border-radius:4px;
-    }
   </style>
 </head>
 <body>
-  <!-- Фоновое превью с камеры -->
+  <!-- Живое превью с камеры -->
   <video id="camera-feed" autoplay playsinline muted></video>
 
-  <!-- MindAR сцена -->
+  <!-- MindAR сцена только для трекинга -->
   <a-scene mindar-image="imageTargetSrc: ./targets.mind"
            color-space="sRGB"
            renderer="colorManagement: true, physicallyCorrectLights"
            vr-mode-ui="enabled: false"
            device-orientation-permission-ui="enabled: false">
-
-    <a-assets>
-      <video id="clip1" src="./videos/clip1.mp4" playsinline webkit-playsinline></video>
-      <video id="clip2" src="./videos/clip2.mp4" playsinline webkit-playsinline></video>
-      <video id="clip3" src="./videos/clip3.mp4" playsinline webkit-playsinline></video>
-      <video id="clip4" src="./videos/clip4.mp4" playsinline webkit-playsinline></video>
-      <video id="clip5" src="./videos/clip5.mp4" playsinline webkit-playsinline></video>
-      <video id="clip6" src="./videos/clip6.mp4" playsinline webkit-playsinline></video>
-    </a-assets>
-
+    <a-assets></a-assets>
     <a-camera position="0 0 0" look-controls="false"></a-camera>
 
-    <a-entity id="t0" mindar-image-target="targetIndex: 0">
-      <a-video src="#clip1" width="0.5625" height="1" position="0 0 0"></a-video>
-    </a-entity>
-    <a-entity id="t1" mindar-image-target="targetIndex: 1">
-      <a-video src="#clip2" width="0.5625" height="1" position="0 0 0"></a-video>
-    </a-entity>
-    <a-entity id="t2" mindar-image-target="targetIndex: 2">
-      <a-video src="#clip3" width="0.5625" height="1" position="0 0 0"></a-video>
-    </a-entity>
-    <a-entity id="t3" mindar-image-target="targetIndex: 3">
-      <a-video src="#clip4" width="0.5625" height="1" position="0 0 0"></a-video>
-    </a-entity>
-    <a-entity id="t4" mindar-image-target="targetIndex: 4">
-      <a-video src="#clip5" width="0.5625" height="1" position="0 0 0"></a-video>
-    </a-entity>
-    <a-entity id="t5" mindar-image-target="targetIndex: 5">
-      <a-video src="#clip6" width="0.5625" height="1" position="0 0 0"></a-video>
-    </a-entity>
+    <a-entity id="t0" mindar-image-target="targetIndex: 0"></a-entity>
+    <a-entity id="t1" mindar-image-target="targetIndex: 1"></a-entity>
+    <a-entity id="t2" mindar-image-target="targetIndex: 2"></a-entity>
+    <a-entity id="t3" mindar-image-target="targetIndex: 3"></a-entity>
+    <a-entity id="t4" mindar-image-target="targetIndex: 4"></a-entity>
+    <a-entity id="t5" mindar-image-target="targetIndex: 5"></a-entity>
   </a-scene>
 
+  <!-- Reels-видео поверх -->
+  <video id="reel1" class="reels" src="./videos/clip1.mp4" playsinline webkit-playsinline></video>
+  <video id="reel2" class="reels" src="./videos/clip2.mp4" playsinline webkit-playsinline></video>
+  <video id="reel3" class="reels" src="./videos/clip3.mp4" playsinline webkit-playsinline></video>
+  <video id="reel4" class="reels" src="./videos/clip4.mp4" playsinline webkit-playsinline></video>
+  <video id="reel5" class="reels" src="./videos/clip5.mp4" playsinline webkit-playsinline></video>
+  <video id="reel6" class="reels" src="./videos/clip6.mp4" playsinline webkit-playsinline></video>
+
   <div class="hint">
-    Multi Target: 6 картинок → 6 роликов (Reels формат 9:16 + звук).<br>
-    Первый тап активирует воспроизведение со звуком.
+    Наведи камеру на постер → он оживёт 🚀<br>
+    (Reels-формат 9:16 + звук после тапа)
   </div>
 
   <script>
-    // Привязка роликов к таргетам
-    const map = [
-      {entityId:'t0', videoId:'clip1'},
-      {entityId:'t1', videoId:'clip2'},
-      {entityId:'t2', videoId:'clip3'},
-      {entityId:'t3', videoId:'clip4'},
-      {entityId:'t4', videoId:'clip5'},
-      {entityId:'t5', videoId:'clip6'}
-    ];
-
-    map.forEach(({entityId, videoId})=>{
-      const ent = document.getElementById(entityId);
-      const vid = document.getElementById(videoId);
-      ent.addEventListener('targetFound', ()=> vid.play().catch(()=>{}));
-      ent.addEventListener('targetLost', ()=> vid.pause());
-    });
-
-    // iOS/Safari fix: первый тап включает звук
-    document.body.addEventListener('click', ()=> {
-      const vids = document.querySelectorAll("video");
-      vids.forEach(v => {
-        v.muted = false;
-        v.play().catch(()=>{});
-      });
-    }, {once:true});
-
-    // Фоновое превью камеры
+    // включаем камеру как фон
     if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
       navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } })
         .then(stream => {
           document.getElementById("camera-feed").srcObject = stream;
         })
-        .catch(err => {
-          console.error("Ошибка доступа к камере:", err);
-        });
+        .catch(err => console.error("Ошибка камеры:", err));
     }
+
+    // Связь target → ролик
+    const map = [
+      {entityId:'t0', reelId:'reel1'},
+      {entityId:'t1', reelId:'reel2'},
+      {entityId:'t2', reelId:'reel3'},
+      {entityId:'t3', reelId:'reel4'},
+      {entityId:'t4', reelId:'reel5'},
+      {entityId:'t5', reelId:'reel6'}
+    ];
+
+    map.forEach(({entityId, reelId})=>{
+      const ent = document.getElementById(entityId);
+      const reel = document.getElementById(reelId);
+
+      ent.addEventListener("targetFound", () => {
+        document.querySelectorAll(".reels").forEach(v=>{
+          v.pause();
+          v.style.display="none";
+        });
+        reel.style.display="block";
+        reel.play().catch(()=>{});
+      });
+
+      ent.addEventListener("targetLost", () => {
+        reel.pause();
+        reel.style.display="none";
+      });
+    });
+
+    // iOS Safari: звук активируется после первого тапа
+    document.body.addEventListener("click", ()=>{
+      document.querySelectorAll(".reels").forEach(v=>{
+        v.muted = false;
+        v.play().catch(()=>{});
+      });
+    }, {once:true});
   </script>
 </body>
 </html>
