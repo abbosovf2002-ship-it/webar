@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>AR Poster (6 targets, Reels format + sound)</title>
+  <title>AR Poster (6 targets, Reels + sound + camera view)</title>
   <script src="https://aframe.io/releases/1.3.0/aframe.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
   <style>
@@ -37,9 +37,10 @@
 <body>
   <a-scene mindar-image="imageTargetSrc: ./targets.mind"
            color-space="sRGB"
-           renderer="colorManagement: true, physicallyCorrectLights"
+           renderer="colorManagement: true, physicallyCorrectLights, alpha:true"
            vr-mode-ui="enabled: false"
            device-orientation-permission-ui="enabled: false">
+           
     <a-assets>
       <video id="clip1" src="./videos/clip1.mp4" playsinline webkit-playsinline></video>
       <video id="clip2" src="./videos/clip2.mp4" playsinline webkit-playsinline></video>
@@ -77,8 +78,8 @@
   </a-scene>
 
   <div class="hint">
-    Multi Target: 6 картинок → 6 роликов (Reels формат 9:16 + звук).<br>
-    Первый тап активирует воспроизведение со звуком.
+    Multi Target: 6 картинок → 6 роликов (Reels формат + звук + камера видна сразу).<br>
+    Первый тап включает звук.
   </div>
 
   <script>
@@ -98,7 +99,7 @@
       ent.addEventListener('targetLost', ()=> vid.pause());
     });
 
-    // iOS/Safari fix: первый тап включает звук
+    // 🔹 iOS/Safari fix: первый тап включает звук
     document.body.addEventListener('click', ()=> {
       const vids = document.querySelectorAll("video");
       vids.forEach(v => {
