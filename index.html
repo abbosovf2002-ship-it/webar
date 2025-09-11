@@ -70,7 +70,7 @@
   </div>
 
   <script>
-    // включаем камеру как фон
+    // Включаем камеру как фон
     if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
       navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } })
         .then(stream => {
@@ -97,6 +97,7 @@
           v.style.display="none";
         });
         reel.style.display="block";
+        reel.currentTime = 0;  // Начать с начала
         reel.play().catch(()=>{});
       });
 
